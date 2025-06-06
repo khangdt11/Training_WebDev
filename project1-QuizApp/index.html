@@ -9,7 +9,7 @@
   <body>
     <div class="container">
       <!-- START SCREEN -->
-      <div class="screen" id="start-screen">
+      <div class="screen active" id="start-screen">
         <h1>Quiz Time!</h1>
         <p>Test your knowledge with these fun questions</p>
         <button id="start-btn">Start Quiz</button>
@@ -17,8 +17,8 @@
 
       <!-- QUIZ SCREEN - HARDCODED EXAMPLE -->
       <!-- Remove 'active' class and add it to start-screen to see this -->
-      <div class="screen active " id="quiz-screen">
-        <!-- <div class="quiz-header">
+      <!-- <div class="screen " id="quiz-screen">
+        <div class="quiz-header">
           <h2 id="question-text">What is the capital of France?</h2>
           <div class="quiz-info">
             <p>
@@ -27,23 +27,23 @@
             </p>
             <p>Score: <span id="score">0</span></p>
           </div>
-        </div> -->
+        </div> 
 
-        <!-- <div id="answers-container" class="answers-container">
+         <div id="answers-container" class="answers-container">
           <button class="answer-btn" data-correct="false">London</button>
           <button class="answer-btn" data-correct="false">Berlin</button>
           <button class="answer-btn" data-correct="true">Paris</button>
           <button class="answer-btn" data-correct="false">Madrid</button>
-        </div> -->
+        </div> 
 
-        <!-- <div class="progress-bar">
+         <div class="progress-bar">
           <div id="progress" class="progress" style="width: 20%"></div>
         </div>
       </div> -->
 
-      <!-- QUIZ SCREEN - SHOWING CORRECT/INCORRECT ANSWERS -->
+       <!--QUIZ SCREEN - SHOWING CORRECT/INCORRECT ANSWERS -->
       <!-- This shows how answers look after selection -->
-      <div class="screen" id="quiz-screen-answered">
+      <!-- <div class="screen" id="quiz-screen-answered">
         <div class="quiz-header">
           <h2 id="question-text-answered">What is the capital of France?</h2>
           <div class="quiz-info">
@@ -52,23 +52,23 @@
           </div>
         </div>
 
-        <div class="answers-container">
+        <div class="answers-container"> -->
           <!-- SHOWING ANSWER STATES AFTER SELECTION -->
-          <button class="answer-btn" data-correct="false">London</button>
+          <!-- <button class="answer-btn" data-correct="false">London</button>
           <button class="answer-btn" data-correct="false">Berlin</button>
           <button class="answer-btn correct" data-correct="true">
             Paris ✓
           </button>
           <button class="answer-btn" data-correct="false">Madrid</button>
-        </div>
+        </div> -->
 
-        <div class="progress-bar">
+        <!-- <div class="progress-bar">
           <div class="progress" style="width: 20%"></div>
         </div>
-      </div>
+      </div> -->
 
       <!-- QUIZ SCREEN - SHOWING INCORRECT SELECTION -->
-      <div class="screen" id="quiz-screen-wrong">
+      <!-- <div class="screen" id="quiz-screen-wrong">
         <div class="quiz-header">
           <h2>Which planet is known as the Red Planet?</h2>
           <div class="quiz-info">
@@ -77,9 +77,9 @@
           </div>
         </div>
 
-        <div class="answers-container">
+        <div class="answers-container"> -->
           <!-- SHOWING WRONG ANSWER SELECTED -->
-          <button class="answer-btn incorrect" data-correct="false">
+          <!-- <button class="answer-btn incorrect" data-correct="false">
             Venus ✗
           </button>
           <button class="answer-btn correct" data-correct="true">Mars ✓</button>
@@ -90,10 +90,10 @@
         <div class="progress-bar">
           <div class="progress" style="width: 40%"></div>
         </div>
-      </div>
+      </div> -->
 
       <!-- RESULT SCREEN - HARDCODED EXAMPLE -->
-      <div id="result-screen" class="screen">
+      <!-- <div id="result-screen" class="screen">
         <h1>Quiz Results</h1>
         <div class="result-info">
           <p>
@@ -103,20 +103,20 @@
           <div id="result-message">Great job! You know your stuff!</div>
         </div>
         <button id="restart-btn">Restart Quiz</button>
-      </div>
+      </div> -->
 
       <!-- RESULT SCREEN - PERFECT SCORE EXAMPLE -->
-      <div class="screen" id="result-screen-perfect">
+      <!-- <div class="screen" id="result-screen-perfect">
         <h1>Quiz Results</h1>
         <div class="result-info">
           <p>You scored <span>5</span> out of <span>5</span></p>
           <div id="result-message">Perfect! You're a genius!</div>
         </div>
         <button>Restart Quiz</button>
-      </div>
+      </div> -->
 
       <!-- RESULT SCREEN - LOW SCORE EXAMPLE -->
-      <div class="screen" id="result-screen-low">
+      <!-- <div class="screen" id="result-screen-low">
         <h1>Quiz Results</h1>
         <div class="result-info">
           <p>You scored <span>2</span> out of <span>5</span></p>
@@ -124,37 +124,9 @@
         </div>
         <button>Restart Quiz</button>
       </div>
-    </div>
+    </div> -->
 
-    <!-- INSTRUCTIONS FOR STUDENTS -->
-    <div
-      style="
-        position: fixed;
-        top: 10px;
-        right: 10px;
-        background: #fff;
-        padding: 15px;
-        border-radius: 10px;
-        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
-        max-width: 300px;
-        font-family: sans-serif;
-        font-size: 14px;
-      "
-    >
-      <h3 style="color: #e86a33; margin-bottom: 10px">🎯 For Students:</h3>
-      <p style="margin-bottom: 8px">
-        <strong>To see different screens:</strong>
-      </p>
-      <ul style="margin-left: 15px; margin-bottom: 10px">
-        <li>
-          Move the <code>active</code> class between different screen divs
-        </li>
-        <li>See quiz questions, answer states, and results</li>
-      </ul>
-      <p style="color: #666; font-size: 12px">
-        This shows what your JavaScript will create dynamically!
-      </p>
-    </div>
+    
 
     <script src="script.js"></script>
   </body>

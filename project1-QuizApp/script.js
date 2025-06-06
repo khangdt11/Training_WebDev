@@ -46,27 +46,33 @@ const quizQuestions = [
     },
 ];
 
-const button = document.querySelector('.answer-btn')
+const btnStart = document.getElementById('start-btn');
+const quizScreen = document.createElement('div');
+quizScreen.id = 'quiz-screen'
+quizScreen.className = 'screen active';
+
+
+
+
+const container =  document.querySelector('.container');
 
 let currentIndex = 0;
 let currentScore = 0;
 
+btnStart.addEventListener('click', e => {
+    document.getElementById('start-screen').remove();
+    container.appendChild(quizScreen);
+    showQuiz(currentIndex);
+});
 
 
-const createBtn = (index, currentQuestion) => {
-    const buttonAnswer = document.createElement('button');
-    buttonAnswer.className = 'answer-btn';
-    buttonAnswer.textContent= currentQuestion.answers[index].text;
-    buttonAnswer.setAttribute('data-correct', currentQuestion.answers[index].correct)
-    return buttonAnswer;
-}
 
-const renderQuestion = (currentIndex) => {
-    const currentQuestion = quizQuestions[currentIndex];
+function showQuiz(currentIndex) {
+    const currQuestion = quizQuestions[currentIndex];
+
     const headerContainer = document.createElement('div');
-
-    headerContainer.classList.add('quiz-header');
-    headerContainer.innerHTML = `<h2 id="question-text">${currentQuestion.question}</h2>
+    headerContainer.className = 'quiz-header';
+    headerContainer.innerHTML = `<h2 id="question-text">${currQuestion.question}</h2>
           <div class="quiz-info">
             <p>
               Question <span id="current-question">${currentIndex + 1}</span> of
@@ -74,53 +80,59 @@ const renderQuestion = (currentIndex) => {
             </p>
             <p>Score: <span id="score">${currentScore}</span></p>
           </div>`;
-
-    document.getElementById('quiz-screen').appendChild(headerContainer);
+    quizScreen.appendChild(headerContainer);
 
     const answersContainer = document.createElement('div');
-    answersContainer.id = 'answers-container'
     answersContainer.className = 'answers-container';
-                
-    document.getElementById('quiz-screen').appendChild(answersContainer);
-     
-    
+    currQuestion.answers.forEach((ans) => {
+        const buttonAnswer = document.createElement('button');
+        buttonAnswer.className = 'answer-btn';
+        buttonAnswer.textContent = ans.text;
+        buttonAnswer.setAttribute('data-correct', `${ans.correct}`);
+        answersContainer.appendChild(buttonAnswer);
 
-    currentQuestion.answers.forEach((ans, index) => {
-        const button = createBtn(index, currentQuestion);
-        answersContainer.appendChild(button);
-        button.addEventListener('click', e => {
-            document.querySelectorAll(".answer-btn").forEach((btn) => {
-                btn.disabled = true;
-            });
-            if(currentIndex < quizQuestions.length) {
-                const isCorrect = e.target.dataset.correct;          
-                if(isCorrect === 'true') {
-                     currentScore += 20;
-                     e.target.classList.add('correct');
-                     setTimeout(() => {
-                         headerContainer.remove();
-                         answersContainer.remove();
-                         currentIndex++;
-                         renderQuestion(currentIndex);
-                     }, 2000)
-                } else {
-                    e.target.classList.add('incorrect');
-                    setTimeout(() => {
-                         headerContainer.remove();
-                         answersContainer.remove();
-                         currentIndex++;
-                         renderQuestion(currentIndex);
-                    }, 2000)
+        buttonAnswer.addEventListener('click', e => {         
+            (Array.from(document.querySelectorAll('.answer-btn'))).forEach((answer) => {
+                answer.disabled = true;
+                if(answer.dataset.correct === 'true') {
+                    answer.classList.add('correct');
+                } else if (answer === e.target) {
+                    answer.classList.add('incorrect');
                 }
-            } else {
+            });
+            if(e.target.dataset.correct === 'true') {
+                currentScore += 20;
+            }
+            currentIndex++;
+            setTimeout(() => {
                 headerContainer.remove();
                 answersContainer.remove();
-            }
-        });
-    });           
-};
+                if(currentIndex < quizQuestions.length) {
+                    showQuiz(currentIndex);
+                } else {
+                   quizScreen.classList.remove('active');
+                   const resultScreen = document.createElement('div');
+                   resultScreen.classList.add('screen');
+                   resultScreen.classList.add('active');
+                   resultScreen.id = 'result-screen';
+                   resultScreen.innerHTML = `<h1>Quiz Results</h1>
+                    <div class="result-info">
+                    <p>
+                        You scored <span id="final-score">${currentScore}</span> out of
+                        <span id="max-score">100</span>
+                    </p>
+                    <div id="result-message">Great job! You know your stuff!</div>
+                    </div>`;
+                    container.appendChild(resultScreen);
+                }
+            }, 1000);
 
-renderQuestion(currentIndex);
+
+        });
+    });
+
+    quizScreen.appendChild(answersContainer);
+}
 
 
 
