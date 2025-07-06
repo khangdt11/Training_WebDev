@@ -5,6 +5,7 @@ const global = {
     type: '',
     page: 1,
     totalPages: 1,
+    totalResuls: 1,
   },
   api: {
     api_key: '73bacc4b4f9d4968dc371cfe56b13e78',
@@ -280,63 +281,152 @@ function showAlert (messasge, className = 'error') {
 
 }
 
+async function getDataFromAPI(endpoint) {
+  const URL_BASE = global.api.api_url;
+  const API_KEY = global.api.api_key;
+
+  showSpinner();
+  try {
+    const response = await axios.get(`${URL_BASE}${endpoint}`, {
+      params: {
+        api_key: API_KEY,
+        language: 'en-US'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    showAlert('Error fetching data', 'error');
+    console.error(error);
+    return null;
+  } finally {
+    hideSpinner();
+  }
+}
+
+function displayBackgroundImage(type, backgroundPath) {
+  const overlayDiv = document.createElement('div');
+  overlayDiv.style.backgroundImage = `url(https://image.tmdb.org/t/p/original/${backgroundPath})`;
+  overlayDiv.style.backgroundSize = 'cover';
+  overlayDiv.style.backgroundPosition = 'center';
+  overlayDiv.style.backgroundRepeat = 'no-repeat';
+  overlayDiv.style.height = '100vh';
+  overlayDiv.style.width = '100vw';
+  overlayDiv.style.position = 'absolute';
+  overlayDiv.style.top = '0';
+  overlayDiv.style.left = '0';
+  overlayDiv.style.zIndex = '-1';
+  overlayDiv.style.opacity = '0.1';
+
+  if (type === 'movie') {
+    document.querySelector('#movie-details').appendChild(overlayDiv);
+  } else {
+    document.querySelector('#show-details').appendChild(overlayDiv);
+  }
+}
+
 async function searchAPIData() {
   const URL_BASE = global.api.api_url;
   const API_KEY = global.api.api_key;
 
   showSpinner();
-
-  const res = await fetch(`${URL_BASE}search/${global.search.type}?api_key=${API_KEY}&language=en-US&query=${global.search.term}`);
-
-  const data = await res.json();
-
-  hideSpinner();
-
-  return data;
+  try {
+    const response = await axios.get(`${URL_BASE}search/${global.search.type}`, {
+      params: {
+        api_key: API_KEY,
+        language: 'en-US',
+        query: global.search.term
+      }
+    });
+    return response.data;
+  } catch (error) {
+    showAlert('Error searching data', 'error');
+    console.error(error);
+    return { results: [], total_pages: 1, page: 1, total_results: 0 };
+  } finally {
+    hideSpinner();
+  }
 }
 
+// Search Movies/Shows
 async function search() {
   const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
 
-  const URLParams = new URLSearchParams(queryString);
-  global.search.type = URLParams.get('type');
-  global.search.term =  URLParams.get('search-term');
+  global.search.type = urlParams.get('type');
+  global.search.term = urlParams.get('search-term');
 
   if (global.search.term !== '' && global.search.term !== null) {
-    const {results, total_pages, page } = await searchAPIData();
+    const { results, total_pages, page, total_results } = await searchAPIData();
+
+    global.search.page = page;
+    global.search.totalPages = total_pages;
+    global.search.totalResults = total_results;
+
     if (results.length === 0) {
       showAlert('No results found');
       return;
-    } else {
-      console.log(results);
-      displaySearchResults(results);
-      document.querySelector('#search-term').value = '';
     }
-  } else {
-    showAlert('please enter the query');
-    
-  }
-};
 
-function displaySearchResults(results) {
-  results.forEach((result) => {
-    const div = document.createElement('div');
-    div.className = 'card';
-    div.innerHTML = `<a href="${global.search.type}-details.html?id=${result.id}">
-            <img src="https://image.tmdb.org/t/p/w500${result.poster_path}" class="card-img-top" alt="${global.search.type === 'movie' ? result.title : result.name}" />
-          </a>
-          <div class="card-body">
-            <h5 class="card-title">${result.title}</h5>
-            <p class="card-text">
-              <small class="text-muted">Release: ${global.search.type === 'movie' ? result.release_date : result.first_air_date}</small>
-            </p>
-          </div>`;
-    document.querySelector('#search-results').appendChild(div)
-  });
+    displaySearchResults(results);
+
+    document.querySelector('#search-term').value = '';
+  } else {
+    showAlert('Please enter a search term');
+  }
 }
 
-search()
+function displaySearchResults(results) {
+  // Clear previous results
+  document.querySelector('#search-results').innerHTML = '';
+  document.querySelector('#search-results-heading').innerHTML = '';
+  document.querySelector('#pagination').innerHTML = '';
 
+  results.forEach((result) => {
+    const div = document.createElement('div');
+    div.classList.add('card');
+    div.innerHTML = `
+          <a href="${global.search.type}-details.html?id=${result.id}">
+            ${
+              result.poster_path
+                ? `<img
+              src="https://image.tmdb.org/t/p/w500${result.poster_path}"
+              class="card-img-top"
+              alt="${
+                global.search.type === 'movie' ? result.title : result.name
+              }"
+            />`
+                : `<img
+            src="../images/no-image.jpg"
+            class="card-img-top"
+             alt="${
+               global.search.type === 'movie' ? result.title : result.name
+             }"
+          />`
+            }
+          </a>
+          <div class="card-body">
+            <h5 class="card-title">${
+              global.search.type === 'movie' ? result.title : result.name
+            }</h5>
+            <p class="card-text">
+              <small class="text-muted">Release: ${
+                global.search.type === 'movie'
+                  ? result.release_date
+                  : result.first_air_date
+              }</small>
+            </p>
+          </div>
+        `;
+
+    document.querySelector('#search-results-heading').innerHTML = `
+              <h2>${results.length} of ${global.search.totalResults} Results for ${global.search.term}</h2>
+    `;
+
+    document.querySelector('#search-results').appendChild(div);
+  });
+
+  displayPagination();
+}
 
 // Init App
 function init() {
@@ -362,6 +452,7 @@ function init() {
       console.log("TV Details");
       break;
     case "/search.html":
+      search();
       console.log("Search");
       break;
   }
